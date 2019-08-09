@@ -1,13 +1,15 @@
 import re
 import string
 
+import numpy as np
 import pandas as pd
 
 from nltk.corpus import stopwords
 from sklearn.utils import shuffle
 
 RANDOM_SEED = 17
-OUTPUT_DIR = '/Users/ak/PycharmProjects/comp_embed/data/processed/'
+TRAINING_OUTPUT_DIR = '/home/ak/Projects/comp_embed/src/data/processed/training/'
+TESTING_OUTPUT_DIR = '/home/ak/Projects/comp_embed/src/data/processed/testing/'
 
 
 def remove_pii(_text):
@@ -47,6 +49,8 @@ def all_lower_single_line(_str):
     :return: Lower case string.
     """
     _str = _str.replace('\n', '')
+    # Experimental, can we strip whitespace to reduce encoding length?
+    _str = _str.replace(' ', '')
     return _str.lower()
 
 
@@ -65,7 +69,7 @@ def clean_complaint_documents(_df, _stops):
 
 
 if __name__ == "__main__":
-    complaints = pd.read_csv('/Users/ak/PycharmProjects/comp_embed/data/raw/case_study_data.csv')
+    complaints = pd.read_csv('/home/ak/Projects/comp_embed/src/data/raw/case_study_data.csv')
     stopwords = set(stopwords.words('english'))
     cleaned_complaints = clean_complaint_documents(complaints, stopwords)
     distinct_products = list(set(cleaned_complaints['product_group'].tolist()))
@@ -75,7 +79,18 @@ if __name__ == "__main__":
         print('Number of documents: {d}'.format(d=len(subset)))
         shuffled_data = shuffle(subset, random_state=RANDOM_SEED)
         document_only = shuffled_data['cleaned_document'].tolist()
-        fp = OUTPUT_DIR + prod + '.txt'
+        total_class_len = len(document_only)
+        #train_len = int(np.ceil(total_class_len*0.05))
+        train_len = 2000
+        print(train_len)
+        training_docs = document_only[:train_len]
+        testing_docs = document_only[train_len+1:]
+        fp = TRAINING_OUTPUT_DIR + prod + '.txt'
         with open(fp, 'w') as f:
-            for doc in document_only:
+            for doc in training_docs:
                 f.write(doc + "\n")
+        tfp = TESTING_OUTPUT_DIR + prod + '.txt'
+        with open(tfp, 'w') as g:
+            for doc in testing_docs:
+                g.write(doc + "\n")
+
