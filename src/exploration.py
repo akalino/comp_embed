@@ -1,7 +1,7 @@
 import pandas as pd
 
 if __name__ == "__main__":
-    complaints = pd.read_csv('/Users/ak/PycharmProjects/comp_embed/data/raw/case_study_data.csv')
+    complaints = pd.read_csv('/home/ak/Projects/comp_embed/src/data/raw/case_study_data.csv')
     print('Data set has {n} records'.format(n=len(complaints)))
     distinct_ids = list(set(complaints.complaint_id.tolist()))
     print('Data set has {i} distinct complaint IDs'.format(i=len(distinct_ids)))
