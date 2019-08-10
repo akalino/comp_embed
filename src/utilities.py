@@ -86,12 +86,15 @@ class PaddedCharSeqData(Dataset):
     def __init__(self, _path, _max_seq):
         self.df = load_data_pandas(_path)
         self.df = self.df.reindex(np.random.permutation(self.df.index)).reset_index(drop=True)
-        self.alphabet = ['_PAD'] + list(generate_web_alphabet())
+        self.alphabet = ['_PAD'] + list(generate_alphabet())
         tqdm.pandas()
         self.max_sequence_length = _max_seq
         self.df['seq_rep'] = self.df.url.progress_apply(lambda x: self.sequence_rep(x))
         self.df.label = pd.Categorical(self.df.label)
         self.df['class_label'] = self.df.label.cat.codes
+        class_idx = self.df[['label', 'class_label']]
+        class_mapping = class_idx.drop_duplicates(inplace=False)
+        print(class_mapping)
 
     def __len__(self):
         return self.df.shape[0]
@@ -146,7 +149,7 @@ def find_files(_path):
 
 
 def generate_alphabet():
-    alpha = string.ascii_letters + " .,;'"
+    alpha = string.ascii_letters + " 1234567890"
     return alpha
 
 
