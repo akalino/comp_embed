@@ -50,7 +50,7 @@ def all_lower_single_line(_str):
     """
     _str = _str.replace('\n', '')
     # Experimental, can we strip whitespace to reduce encoding length?
-    _str = _str.replace(' ', '')
+    # _str = _str.replace(' ', '')
     return _str.lower()
 
 

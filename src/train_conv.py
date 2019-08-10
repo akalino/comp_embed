@@ -20,7 +20,7 @@ LINEAR_SIZE = 256
 LEARNING_RATE = 0.005
 REG_PARAM = 1e-1
 MOMENTUM = 0.8
-EPOCHS = 1001
+EPOCHS = 500
 PATH = 'data/processed/training/*.txt'
 USE_CUDA = torch.cuda.is_available()
 
@@ -54,12 +54,11 @@ if __name__ == "__main__":
     os.environ['CUDA_VISIBLE_DEVICES'] = '0'
     device = torch.device("cuda:0" if USE_CUDA else "cpu")
     try:
-        df = torch.load('padded_chars.pkl')
+        df = torch.load('outputs/padded_chars.pkl')
     except:
         df = PaddedCharSeqData(PATH, MAX_SEQUENCE)
-        torch.save(df, 'padded_chars.pkl')
+        torch.save(df, 'outputs/padded_chars.pkl')
     train, valid, test = train_valid_test_split(df, split_fold=BATCH_SIZE*20)
-    print(df.count_classes())
     print('Training set has {m} entries'.format(m=len(train)))
     print('Validation set has {n} entries'.format(n=len(valid)))
     print('Test set has {t} entries'.format(t=len(test)))
@@ -70,7 +69,7 @@ if __name__ == "__main__":
     criterion = nn.NLLLoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE, weight_decay=REG_PARAM) #, momentum=MOMENTUM)
     #scheduler = CyclicLR(optimizer)
-    stopper = EarlyStopping(patience=1001, verbose=True, saver=False)
+    stopper = EarlyStopping(patience=101, verbose=True, saver=False)
     for epoch in range(EPOCHS):
         el = 0
         model.train()
@@ -108,5 +107,5 @@ if __name__ == "__main__":
                 print(cr)
         print('Epoch {e} had loss {ls}'.format(e=epoch, ls=el))
         #lr_list = scheduler.get_lr()
-    torch.save(model.state_dict(), 'conv_model.pt')
+    torch.save(model.state_dict(), 'outputs/conv_model.pt')
     #print('Final learning rate was {x}'.format(x=lr_list[-1]))
