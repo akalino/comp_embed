@@ -6,7 +6,7 @@ idna==2.8
 joblib==0.13.2
 mkl-fft==1.0.10
 mkl-random==1.0.2
-nltk==3.4.4
+nltk==3.4.5
 numpy==1.16.2
 pandas==0.25.0
 pycparser==2.19
